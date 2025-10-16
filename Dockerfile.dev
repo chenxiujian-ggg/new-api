@@ -1,4 +1,4 @@
-# ---------------------------------------------
+解释以下Dockerfile.dev文件：# ---------------------------------------------
 # 阶段1：构建前端产物（固定 Node 20.18.3）
 # ---------------------------------------------
 FROM node:20.18.3-alpine AS web-builder
@@ -11,7 +11,7 @@ RUN npm run build
 # ---------------------------------------------
 # 阶段2：构建 Go 后端（含模块缓存）
 # ---------------------------------------------
-FROM golang:1.23.4-linux-amd64-alpine AS go-builder
+FROM golang:1.23.4-alpine AS go-builder
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
@@ -39,13 +39,13 @@ RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
 
 # 3. 安装 Node 20.18.3（官方二进制，覆盖 apt 默认）
 ARG NODE_VERSION=20.18.3
-RUN curl -fSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz | \
+RUN curl -fSL https://nodejs.org/dist/v ${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz | \
     tar -xJ -C /usr/local --strip-components=1 && \
     ln -sf /usr/local/bin/{node,npm,npx} /usr/bin/
 
 # 4. 安装 Go 1.23.4（官方二进制）
 ARG GO_VERSION=1.23.4
-RUN curl -fSL https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | \
+RUN curl -fSL https://golang.org/dl/go ${GO_VERSION}.linux-amd64.tar.gz | \
     tar -xz -C /usr/local && \
     ln -sf /usr/local/go/bin/go /usr/local/bin/go
 
@@ -53,7 +53,7 @@ RUN curl -fSL https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | \
 COPY . .
 COPY --from=web-builder /app/web ./web
 
-# 6. 复制 Go 模块缓存
+# 6. 复制 Go 模块缓存（方案 A）
 COPY --from=go-builder /go/pkg/mod /root/go/pkg/mod
 
 # 7. 安装 air
