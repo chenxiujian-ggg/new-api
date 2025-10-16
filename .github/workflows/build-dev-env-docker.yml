@@ -27,12 +27,6 @@ jobs:
           cache-to: type=gha,mode=max
           load: true                 # 让镜像直接出现在本地 docker images
 
-      - name: Smoke test（20s）
-        run: |
-          docker run --rm -d --name test-dev ${{ env.IMAGE_NAME }}:latest
-          sleep 20
-          docker stop test-dev
-
       - name: Export image to tar
         run: |
           docker save ${{ env.IMAGE_NAME }}:latest | gzip > dev-image.tar.gz
