@@ -11,7 +11,7 @@ RUN npm run build
 # ---------------------------------------------
 # 阶段2：构建 Go 后端（含模块缓存）
 # ---------------------------------------------
-FROM golang:1.25.0-linux-amd64-alpine AS go-builder
+FROM golang:1.23.4-linux-amd64-alpine AS go-builder
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
@@ -43,8 +43,8 @@ RUN curl -fSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-lin
     tar -xJ -C /usr/local --strip-components=1 && \
     ln -sf /usr/local/bin/{node,npm,npx} /usr/bin/
 
-# 4. 安装 Go 1.25.0（官方二进制）
-ARG GO_VERSION=1.25.0
+# 4. 安装 Go 1.23.4（官方二进制）
+ARG GO_VERSION=1.23.4
 RUN curl -fSL https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | \
     tar -xz -C /usr/local && \
     ln -sf /usr/local/go/bin/go /usr/local/bin/go
